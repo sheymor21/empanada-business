@@ -1,6 +1,6 @@
 import {Module} from '@nestjs/common';
 import {EmpanadasModule} from './empanadas/empanadas.module';
-import {DatabaseProvider} from "./empanadas/database/database.config";
+import {DatabaseProvider} from "./database/database.config";
 
 @Module({
     imports: [EmpanadasModule, DatabaseProvider.get()],
