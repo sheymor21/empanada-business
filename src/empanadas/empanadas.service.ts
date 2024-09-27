@@ -1,26 +1,37 @@
-import { Injectable } from '@nestjs/common';
-import { CreateEmpanadaDto } from './dto/create-empanada.dto';
-import { UpdateEmpanadaDto } from './dto/update-empanada.dto';
+import {Injectable} from '@nestjs/common';
+import {CreateEmpanadaDto} from './dto/create-empanada.dto';
+import {UpdateEmpanadaDto} from './dto/update-empanada.dto';
+import {InjectRepository} from "@nestjs/typeorm";
+import {Empanada} from "./entities/empanada.entity";
+import {Repository} from "typeorm";
 
 @Injectable()
 export class EmpanadasService {
-  create(createEmpanadaDto: CreateEmpanadaDto) {
-    return 'This action adds a new empanada';
-  }
+    constructor(
+        @InjectRepository(Empanada)
+        private readonly empanadasRepository: Repository<Empanada>
+    ) {
 
-  findAll() {
-    return `This action returns all empanadas`;
-  }
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} empanada`;
-  }
+    async create(createEmpanadaDto: CreateEmpanadaDto) {
+        let empanada = this.empanadasRepository.create(createEmpanadaDto);
+        return this.empanadasRepository.save(empanada);
+    }
 
-  update(id: number, updateEmpanadaDto: UpdateEmpanadaDto) {
-    return `This action updates a #${id} empanada`;
-  }
+    async findAll() {
+        return this.empanadasRepository.find();
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} empanada`;
-  }
+    async findOne(id: string) {
+        return this.empanadasRepository.findBy({id});
+    }
+
+    async update(id: string, updateEmpanadaDto: UpdateEmpanadaDto) {
+        return this.empanadasRepository.update(id, updateEmpanadaDto);
+    }
+
+    async remove(id: string) {
+        return this.empanadasRepository.softDelete({id});
+    }
 }

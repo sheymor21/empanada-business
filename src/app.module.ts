@@ -1,9 +1,11 @@
-import { Module } from '@nestjs/common';
-import { EmpanadasModule } from './empanadas/empanadas.module';
+import {Module} from '@nestjs/common';
+import {EmpanadasModule} from './empanadas/empanadas.module';
+import {DatabaseProvider} from "./empanadas/database/database.config";
 
 @Module({
-  imports: [EmpanadasModule],
-  controllers: [],
-  providers: [],
+    imports: [EmpanadasModule, DatabaseProvider.get()],
+    controllers: [],
+    providers: [],
 })
-export class AppModule {}
+export class AppModule {
+}
