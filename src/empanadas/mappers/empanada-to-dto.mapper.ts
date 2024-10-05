@@ -1,18 +1,20 @@
 ﻿import {Empanada} from "../entities/empanada.entity";
 import {GetEmpanadaDto} from "../dto/get-empanada.dto";
+import {GetOrderEmpanadas} from "../../order/dto/get-order-empanada.dto";
+import {countBy} from 'lodash'
 
-function empanadaToDto(empanada: Empanada): GetEmpanadaDto {
-    let getEmpanadaDto = new GetEmpanadaDto();
-    getEmpanadaDto.name = empanada.name;
-    getEmpanadaDto.id = empanada.id;
-    getEmpanadaDto.price = empanada.price;
-    return getEmpanadaDto;
+export function empanadaToDto(empanada: Empanada): GetEmpanadaDto {
+    return {
+        id: empanada.id,
+        name: empanada.name,
+        price: empanada.price
+    };
 }
 
-function empanadasToDtos(empanada: Empanada[]): GetEmpanadaDto[] {
-    let getEmpanadaDtos: GetEmpanadaDto[] = []
+export function empanadasToDtos(empanada: Empanada[]): GetEmpanadaDto[] {
+    const getEmpanadaDtos: GetEmpanadaDto[] = []
     empanada.map((value) => {
-            let dto: GetEmpanadaDto = {
+            const dto: GetEmpanadaDto = {
                 id: value.id,
                 name: value.name,
                 price: value.price
@@ -23,4 +25,17 @@ function empanadasToDtos(empanada: Empanada[]): GetEmpanadaDto[] {
     return getEmpanadaDtos;
 }
 
-export {empanadaToDto, empanadasToDtos};
+export function orderEmpanadasToDtos(empanada: Empanada[]): GetOrderEmpanadas[] {
+    const getEmpanadaDtos: GetOrderEmpanadas[] = []
+    let count = countBy(empanada, 'id')
+    empanada.map((value) => {
+            const dto: GetOrderEmpanadas = {
+                name: value.name,
+                price: value.price,
+                quantity: count[value.id]
+            }
+            getEmpanadaDtos.push(dto);
+        }
+    )
+    return getEmpanadaDtos;
+}

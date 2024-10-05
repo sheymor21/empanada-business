@@ -6,32 +6,31 @@ import {
     OneToMany,
     UpdateDateColumn
 } from "typeorm";
-import {OrderEmpanadas} from "../../order/entities/order-empanadas.entity";
+import {OrderEmpanadas} from "./order-empanadas.entity";
 
 @Entity()
-export class Empanada {
-
+export class Order {
     @Column({primary: true, generated: "uuid"})
     id: string;
 
     @Column()
-    name: string;
+    customerName: string;
 
-    @Column("double", {precision: 5, scale: 2, default: 0.0})
-    price: number;
+    @Column("double")
+    totalPrice: number;
 
-    @OneToMany(() => OrderEmpanadas, (orderEmpanada) => orderEmpanada.empanada,
+    @OneToMany(() => OrderEmpanadas, (orderEmpanadas) => orderEmpanadas.order,
         {
             cascade: ["insert"]
         })
-    orderEmpanada: OrderEmpanadas[];
+    orderEmpanadas: OrderEmpanadas[];
 
     @CreateDateColumn()
     createAt: Date;
 
     @UpdateDateColumn()
-    updateAt: Date
+    UpdateAt: Date;
 
     @DeleteDateColumn()
-    deleteAt: Date;
+    DeleteAt: Date;
 }
