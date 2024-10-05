@@ -8,6 +8,7 @@ import {Empanada} from "./entities/empanada.entity";
     imports: [TypeOrmModule.forFeature([Empanada])],
     controllers: [EmpanadasController],
     providers: [EmpanadasService],
+    exports: [TypeOrmModule]
 })
 export class EmpanadasModule {
 }

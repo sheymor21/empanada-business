@@ -15,7 +15,7 @@ export class EmpanadasService {
     }
 
     async create(createEmpanadaDto: CreateEmpanadaDto) {
-        let empanada = this.empanadasRepository.create(createEmpanadaDto);
+        const empanada = this.empanadasRepository.create(createEmpanadaDto);
         return this.empanadasRepository.save(empanada);
     }
 
@@ -24,7 +24,7 @@ export class EmpanadasService {
     }
 
     async findOne(id: string) {
-        return this.empanadasRepository.findBy({id});
+        return this.empanadasRepository.findOneBy({id});
     }
 
     async update(id: string, updateEmpanadaDto: UpdateEmpanadaDto) {

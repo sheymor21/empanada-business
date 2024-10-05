@@ -3,7 +3,7 @@ import {EmpanadasService} from './empanadas.service';
 import {CreateEmpanadaDto} from './dto/create-empanada.dto';
 import {UpdateEmpanadaDto} from './dto/update-empanada.dto';
 import {Response} from "express";
-import {empanadasToDtos} from "./mappers/empanada-to-dto.mapper";
+import {empanadasToDtos, empanadaToDto} from "./mappers/empanada-to-dto.mapper";
 
 @Controller('empanadas')
 export class EmpanadasController {
@@ -21,18 +21,16 @@ export class EmpanadasController {
 
     @Get()
     async findAll(@Res() res: Response) {
-        return this.empanadasService.findAll().then(empanadas => {
-            return res.status(HttpStatus.OK).send(empanadasToDtos(empanadas));
-        });
+        return this.empanadasService.findAll()
+            .then(empanadas => {
+                return res.status(HttpStatus.OK).send(empanadasToDtos(empanadas));
+            });
     }
 
     @Get(':id')
     async findOne(@Res() res: Response, @Param('id') id: string) {
-        return this.empanadasService.findOne(id).then((empanadas) => {
-            if (empanadas.length != 0) {
-                return res.status(HttpStatus.OK).send(empanadasToDtos(empanadas))
-            }
-            return res.status(HttpStatus.NOT_FOUND).send({});
+        return this.empanadasService.findOne(id).then((empanada) => {
+            return res.status(HttpStatus.OK).send(empanadaToDto(empanada))
         });
     }
 

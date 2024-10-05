@@ -4,9 +4,9 @@ export class UpdateEmpanadaDto {
 
     @IsString()
     @IsOptional()
-    name: string;
+    readonly name: string;
 
     @IsNumber()
     @IsOptional()
-    price: number;
+    readonly price: number;
 }
