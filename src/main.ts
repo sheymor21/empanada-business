@@ -15,12 +15,7 @@ async function bootstrap() {
         transform: true
     }))
 
-    let port: (string | number);
-    if (process.env.APP_PORT != null && process.env.APP_PORT != "") {
-        port = process.env.APP_PORT;
-    } else {
-        port = 8080
-    }
+    let port = process.env.APP_PORT || 8080
     await app.listen(port);
 }
 

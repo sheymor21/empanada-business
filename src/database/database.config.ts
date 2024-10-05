@@ -19,24 +19,17 @@ export class DatabaseProvider {
         let config: DbConfig = {
             username: process.env.DB_USER,
             password: process.env.DB_PASS,
-            databaseName: process.env.DB_NAME,
-            port: Number(process.env.DB_PORT)
-        }
-
-        if (config.databaseName == "") {
-            config.databaseName = "test"
-        }
-        if (config.port == 0) {
-            config.port = 3306
+            databaseName: process.env.DB_NAME || "test",
+            port: Number(process.env.DB_PORT) || 3306
         }
 
         return TypeOrmModule.forRoot({
             type: 'mysql',
             host: 'localhost',
-            port: config.port ? 3306 : config.port,
+            port: config.port,
             username: config.username,
             password: config.password,
-            database: config.databaseName ? "test" : config.databaseName,
+            database: config.databaseName,
             synchronize: true,
             autoLoadEntities: true
         })
