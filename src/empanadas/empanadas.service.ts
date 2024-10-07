@@ -4,6 +4,8 @@ import {UpdateEmpanadaDto} from './dto/update-empanada.dto';
 import {InjectRepository} from "@nestjs/typeorm";
 import {Empanada} from "./entities/empanada.entity";
 import {Repository} from "typeorm";
+import {plainToInstance} from "class-transformer";
+import {GetEmpanadaDto} from "./dto/get-empanada.dto";
 
 @Injectable()
 export class EmpanadasService {
@@ -20,11 +22,13 @@ export class EmpanadasService {
     }
 
     async findAll() {
-        return this.empanadasRepository.find();
+        const result = await this.empanadasRepository.find();
+        return plainToInstance(GetEmpanadaDto, result, {strategy: 'excludeAll'})
     }
 
     async findOne(id: string) {
-        return this.empanadasRepository.findOneBy({id});
+        const result = await this.empanadasRepository.findOneBy({id});
+        return plainToInstance(GetEmpanadaDto, result, {strategy: 'excludeAll'});
     }
 
     async update(id: string, updateEmpanadaDto: UpdateEmpanadaDto) {

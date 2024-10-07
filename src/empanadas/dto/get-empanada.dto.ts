@@ -1,11 +1,10 @@
-﻿export class GetEmpanadaDto {
-    constructor(id: string, name: string, price: number) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
-    }
+﻿import {Expose} from "class-transformer";
 
+export class GetEmpanadaDto {
+    @Expose()
     readonly id: string;
+    @Expose()
     readonly name: string;
+    @Expose()
     readonly price: number;
 }
