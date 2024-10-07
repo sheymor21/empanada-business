@@ -7,7 +7,7 @@ import {InjectRepository} from "@nestjs/typeorm";
 import {Empanada} from "../empanadas/entities/empanada.entity";
 import {GetOrderDto} from "./dto/get-order.dto";
 import {OrderEmpanadas} from "./entities/order-empanadas.entity";
-import {GetOrderEmpanadas} from "./dto/get-order-empanada.dto";
+import {orderToGetOrderDto} from "./mappers/order.mapper";
 
 @Injectable()
 export class OrderService {
@@ -37,8 +37,7 @@ export class OrderService {
             orderEmpanada.quantity = this.getEmpanadaQuantity(empanada.id, createOrderDto.empanadas);
             return orderEmpanada;
         });
-        const createOrder = this.orderRepository.create(order);
-        return await this.orderRepository.save(createOrder);
+        return await this.orderRepository.save(order);
 
     }
 
@@ -48,25 +47,11 @@ export class OrderService {
             .innerJoin('orderEmpanadas.empanada', 'empanada')
             .select(['order.id', 'order.customerName', 'order.totalPrice', 'orderEmpanadas.empanadaId', 'orderEmpanadas.quantity', 'empanada.name', 'empanada.price'])
             .getMany();
-        return orders.map(order => {
 
-            const orderDto: GetOrderDto = {
-                id: order.id,
-                customerName: order.customerName,
-                totalPrice: order.totalPrice,
-                empanadas: order.orderEmpanadas.map(orderEmpanadas => {
-                    return new GetOrderEmpanadas(
-                        orderEmpanadas.empanada.name,
-                        orderEmpanadas.empanada.price,
-                        orderEmpanadas.quantity,
-                    )
-                })
-            }
-            return orderDto
-        });
+        return orderToGetOrderDto(orders)
     }
 
-    async findOne(id: string) {
+    async findOne(id: string): Promise<GetOrderDto> {
 
         const order = await this.orderRepository.createQueryBuilder('order')
             .innerJoin('order.orderEmpanadas', 'orderEmpanadas', 'orderEmpanadas.empanada')
@@ -75,23 +60,15 @@ export class OrderService {
             .select(['order.id', 'order.customerName', 'order.totalPrice', 'orderEmpanadas.empanadaId', 'orderEmpanadas.quantity', 'empanada.name', 'empanada.price'])
             .getOne();
 
-        const orderDto: GetOrderDto = {
-            id: order.id,
-            customerName: order.customerName,
-            totalPrice: order.totalPrice,
-            empanadas: order.orderEmpanadas.map(orderEmpanadas => {
-                return new GetOrderEmpanadas(
-                    orderEmpanadas.empanada.name,
-                    orderEmpanadas.empanada.price,
-                    orderEmpanadas.quantity,
-                )
-            })
-        }
-        return orderDto
+
+        return orderToGetOrderDto(order)
     }
 
     async update(id: string, updateOrderDto: UpdateOrderDto) {
         const order = await this.orderRepository.findOneBy({id})
+        if (order == null) {
+            return null
+        }
         order.customerName = updateOrderDto.customerName
 
         const empanadaIds = updateOrderDto.empanadas.map(empanada => empanada.empanadaId)
@@ -104,11 +81,11 @@ export class OrderService {
         });
         order.totalPrice = 0;
         empanadas.map(item => order.totalPrice += item.price * this.getEmpanadaQuantity(item.id, updateOrderDto.empanadas));
-        await this.orderRepository.save(order);
+        return await this.orderRepository.save(order);
     }
 
     async remove(id: string) {
-        return await this.orderRepository.softRemove({id})
+        return this.orderRepository.softRemove({id})
     }
 
     private getEmpanadaQuantity(id: string, empanada: EmpanadaIds[]) {

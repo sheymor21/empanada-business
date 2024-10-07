@@ -4,5 +4,6 @@ export class GetOrderDto {
     readonly id: string;
     readonly customerName: string;
     readonly totalPrice: number;
-    readonly empanadas: GetOrderEmpanadas[]
+
+    readonly empanadas: GetOrderEmpanadas[];
 }
